@@ -47,6 +47,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.util.Log;
+import android.os.SystemProperties;
 
 import java.io.File;
 import java.io.IOException;
@@ -301,7 +302,10 @@ public class BluetoothOppUtility {
         values.put(BluetoothShare.URI, transInfo.mFileUri);
         values.put(BluetoothShare.MIMETYPE, transInfo.mFileType);
         values.put(BluetoothShare.DESTINATION, transInfo.mDestAddr);
-
+		if ("true".equals(SystemProperties.get("ro.product.8723b_bt.used"))){
+        	Uri uri = Uri.parse(transInfo.mFileUri);
+        	putSendFileInfo(uri, BluetoothOppSendFileInfo.generateFileInfo(context, uri, transInfo.mFileType));
+    	}
         final Uri contentUri = context.getContentResolver().insert(BluetoothShare.CONTENT_URI,
                 values);
         if (V) Log.v(TAG, "Insert contentUri: " + contentUri + "  to device: " +

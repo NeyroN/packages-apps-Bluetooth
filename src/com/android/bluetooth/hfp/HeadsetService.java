@@ -30,6 +30,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
 import android.util.Log;
+import android.os.SystemProperties;
+
 import com.android.bluetooth.btservice.ProfileService;
 import com.android.bluetooth.Utils;
 import java.util.ArrayList;
@@ -341,8 +343,11 @@ public class HeadsetService extends ProfileService {
             connectionState == BluetoothProfile.STATE_CONNECTING) {
             return false;
         }
+		if ("true".equals(SystemProperties.get("ro.product.8723b_bt.used")))
+			mStateMachine.sendMessageDelayed(HeadsetStateMachine.CONNECT, device, 100);
+		else
+        	mStateMachine.sendMessage(HeadsetStateMachine.CONNECT, device);
 
-        mStateMachine.sendMessage(HeadsetStateMachine.CONNECT, device);
         return true;
     }
 

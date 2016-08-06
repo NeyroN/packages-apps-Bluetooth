@@ -26,6 +26,8 @@ import android.util.Log;
 import com.android.bluetooth.avrcp.Avrcp;
 import com.android.bluetooth.btservice.ProfileService;
 import com.android.bluetooth.Utils;
+import android.os.SystemProperties;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -129,8 +131,10 @@ public class A2dpService extends ProfileService {
             connectionState == BluetoothProfile.STATE_CONNECTING) {
             return false;
         }
-
-        mStateMachine.sendMessage(A2dpStateMachine.CONNECT, device);
+		if ("true".equals(SystemProperties.get("ro.product.8723b_bt.used")))
+			mStateMachine.sendMessageDelayed(A2dpStateMachine.CONNECT, device, 100);
+		else
+        	mStateMachine.sendMessage(A2dpStateMachine.CONNECT, device);
         return true;
     }
 

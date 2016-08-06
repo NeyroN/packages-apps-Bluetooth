@@ -26,6 +26,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.ParcelUuid;
 import android.util.Log;
+import android.os.SystemProperties;
 
 import com.android.bluetooth.Utils;
 import com.android.bluetooth.btservice.RemoteDevices.DeviceProperties;
@@ -396,7 +397,10 @@ final class RemoteDevices {
 
         Message message = mHandler.obtainMessage(MESSAGE_UUID_INTENT);
         message.obj = device;
-        mHandler.sendMessageDelayed(message, UUID_INTENT_DELAY);
+		if ("true".equals(SystemProperties.get("ro.product.8723b_bt.used")))
+			mHandler.sendMessageDelayed(message, 11000);
+		else
+        	mHandler.sendMessageDelayed(message, UUID_INTENT_DELAY);
 
         //mAdapterService.getDevicePropertyNative(Utils.getBytesFromAddress(device.getAddress()), AbstractionLayer.BT_PROPERTY_UUIDS);
         mAdapterService.getRemoteServicesNative(Utils.getBytesFromAddress(device.getAddress()));

@@ -39,6 +39,7 @@ import android.os.ServiceManager;
 import android.os.UserManager;
 import android.provider.Settings;
 import android.util.Log;
+import android.os.SystemProperties;
 
 import com.android.bluetooth.btservice.ProfileService;
 import com.android.bluetooth.Utils;
@@ -267,6 +268,14 @@ public class PanService extends ProfileService {
 
     boolean disconnect(BluetoothDevice device) {
         enforceCallingOrSelfPermission(BLUETOOTH_PERM, "Need BLUETOOTH permission");
+        if ("true".equals(SystemProperties.get("ro.product.8723b_bt.used"))){
+	        int connectionState = getConnectionState(device);
+	        if (connectionState != BluetoothProfile.STATE_CONNECTED &&
+	            connectionState != BluetoothProfile.STATE_CONNECTING)
+	        {
+	            return false;
+	        }
+        }
         Message msg = mHandler.obtainMessage(MESSAGE_DISCONNECT,device);
         mHandler.sendMessage(msg);
         return true;
